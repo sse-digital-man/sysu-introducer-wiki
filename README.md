@@ -1,1 +1,1 @@
-# sysu-introducer-plus-wiki
+# SSE 数字人 项目文档
