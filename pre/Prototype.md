@@ -104,7 +104,10 @@
 
 ### 数字人人设
 
-> TODO: ...
+-   姓名：中小大
+-   年轻：20 岁
+
+![personality](img/personality.png)
 
 ### 直播间布局
 
