@@ -1,6 +1,6 @@
 # Table of contents
 
--   [主页](README.md)
+-   [简介](README.md)
 -   [前期阶段](pre/README.md)
     -   [需求分析](pre/demand.md)
     -   [原型设计](pre/prototype.md)
