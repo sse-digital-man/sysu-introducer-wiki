@@ -6,17 +6,39 @@
 
 ## 文件结构
 
-配置信息是对每个模块的具体信息和配置。
-配置信息是对象的嵌套，
-其中第一层对应各个模块，下一层则是不同实现类型对应的配信息。
+系统中各个模块都有其可以配置的参数等配置信息，
+且由于每个模块具有不同实现，因此每个实现也就有其配置信息。
+
+配置信息内的结构如下所示，
+第一层对应的模块，第二层则对应模块不同的实现类型。
+值得注意的是，
+如果一个模块只有一种实现，也就是说其实现类型为`basic`，
+那么对应的配置信息也为 `basic`。
+但如果该模块存在多种实现，
+那么`basic`即为多种实现的公共配置信息。
+
+> TODO: 多个实现类型共享一个配置信息暂时未实现...
+
+具体到每个具体实现的配置信息，
+其实际存储的是**配置项名称**和**配置项内容**的映射集合。
+其中配置项名称应该使用[小驼峰命名法](https://zh.wikipedia.org/wiki/%E9%A7%9D%E5%B3%B0%E5%BC%8F%E5%A4%A7%E5%B0%8F%E5%AF%AB)，
+目前每个配置内容项仅支持如上 3 种类型，
+而配置项内容目前仅支持 `number`, `string` 和 `boolean` 这 3 中类型，
+因此在设计配置项时应该注意这三种类型在 json 中表现差异。
 
 ```typescript
-interface Config {
-    name: Map<str, Map<str, number | string | boolean>>;
+// 模块配置项
+type ModuleItems = Map<str, number | string | boolean>;
+
+interface ConfigInfo {
+    name: ModuleConfig;
+}
+
+interface ModuleConfig {
+    basic: ModuleItems;
+    kind?: ModuleItems;
 }
 ```
-
-> 注意：配置文件中属性的类型
 
 ## 生命周期
 
