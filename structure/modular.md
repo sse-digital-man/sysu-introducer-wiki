@@ -101,7 +101,7 @@ interface ModuleInfo {
     alias: string;
     path?: string;
     modules?: string[];
-    // 默认加载的视线类型
+    // 默认加载的实现类型，系统启动时会加载该实现类型
     default?: string;
     kinds?: string[];
 }
@@ -172,3 +172,45 @@ interface ModuleInfo {
 目前本系统提供 `is_running` 属性，
 当模块处于 `Started` 和 `Starting` 时，
 该属性为 `true`。
+
+## 使用说明
+
+### 1. 单独测试模块
+
+目前本系统提供两种进行单独测试的方法。
+
+#### a. 使用 Cli 控制器
+
+通过指令 `python src/cli/app.py` 即可启动控制器，
+控制器目前支持的指令内容可以查看[相关文档](../controller/cli.md)。
+由于本系统支持对可控模块进行单独控制（启动/停止），
+且部分模块也支持虚拟 (`virtual`) 模块实现，
+因此控制器尽管启动了整个系统，也可以方便地对特定模块进行测试。
+
+#### b. 手动导入模块
+
+如果不想使用该控制器进行调试，也可以通过手动导入模块，其具体步骤如下。
+
+```python
+# 1. 确认 src/modules.json 文件中是否配置了所需的模块实现类型
+# 2. 导入模块管理器单例对象
+from module.interface.manager import manager
+
+name = "xxx"
+kind = "xxx"
+
+# 3. 加载模块
+manager.load_modules()
+
+# 4. (可选) 如果不想修改 src/modules.json 文件，
+# 可以手动切换到所需的模块实现类型
+# manger.change_module_kind(name, kind)
+
+# 5. 导入对应模块
+module = manager.object(name)
+
+# 6. 启动模块
+module.start()
+```
+
+> **注意:** 不能直接通过 `module = Module()` 的方式进行创建模块对象
