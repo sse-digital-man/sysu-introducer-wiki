@@ -14,3 +14,4 @@
 -   [控制器](controller/README.md)
     -   [Cli](controller/cli.md)
     -   [Webui](controller/webui.md)
+-   [开发帮助](help.md)
