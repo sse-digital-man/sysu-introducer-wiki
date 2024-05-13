@@ -6,6 +6,7 @@
     -   [原型设计](pre/prototype.md)
 -   [项目架构](structure/README.md)
     -   [模块化](structure/modular.md)
+    -   [系统交互](structure/interact.md)
     -   [配置文件](structure/config.md)
 -   [模块](module/README.md)
     -   [大语言模型](module/bot.md)
