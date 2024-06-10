@@ -11,6 +11,7 @@
 -   [模块](module/README.md)
     -   [大语言模型](module/bot.md)
     -   [直播爬虫](module/crawler.md)
+    -   [视图层](module/renderer.md)
 -   [控制器](controller/README.md)
     -   [Cli](controller/cli.md)
     -   [Webui](controller/webui.md)
