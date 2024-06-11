@@ -13,12 +13,17 @@
 在本模块中，主要通过 `Renderer` 对象来提供视图层的功能。
 其中，它具有的接口如下：
 
-- `speak(self, path: str)` : 
-视图层做出说话动作，并且播放 `path` 路径下的音频文件。
-- `background_music(self, path: str)` : 
-视图层跟随 `path` 路径下的背景音乐做出动作，可以是摇摆等。
-- `stop_move(self)` : 
-视图层停止一切动作。
+```python
+# 视图层做出说话动作，并且播放 path 路径下的音频文件。
+def speak(self, path: str):
+  ...
+# 视图层跟随 path 路径下的背景音乐做出动作，可以是摇摆等。
+def background_music(self, path: str):
+  ...
+# 视图层停止一切动作。
+def stop_move(self):
+  ...
+```
 
 这些接口的功能已近基本上覆盖了数字人直播所需要的功能。
 若希望额外实现功能，也可以通过在子类添加参数来实现重写，并在调用时加以区分。
