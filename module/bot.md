@@ -79,8 +79,7 @@ class RagBot(BasicBot):
 > TODO: 添加数据库收集的总结
 
 有了数据，便可以开始检索工作。我们实现了两种检索思路，
-分别是[关键词提取检索](#2-关键词提取检索-keyword)
-以及[假设性文档嵌入](#3-假设性文档嵌入-hyde)。
+分别是[关键词提取检索](#2-关键词提取检索-keyword)以及[假设性文档嵌入](#3-假设性文档嵌入-hyde)。
 
 #### 增强
 
@@ -157,7 +156,27 @@ data_prompt = \
 
 ### 3. 假设性文档嵌入 HyDE
 
+`Hyde`(Hypothetical Document Embeddings，假设性文档嵌入)通过使用一个大语言模型，在响应查询的时候建立一个假设的文档。
+通过计算假设文档的向量而在[向量数据库](#2-vector-similarity)中搜索。
+该方法来源于论文 [Precise Zero-Shot Dense Retrieval without Relevance Labels](https://arxiv.org/abs/2212.10496)。
 
+`HyDE` 考虑到的是在 `查询-回答` 任务中，`查询` 与 `回答` 的相似度可能不高，不如生成一个假设的回答，从而通过这个假设的回答在向量数据库中进行检索。
+
+代码实现上也非常简单：
+
+```python
+def retrieve_sim_k(self, query: str, k: int) -> Dict[str, str]:
+    # 基本的检查...
+
+    # 1. 生成 hyde 假设性回答
+    query = searcher.prompt_template.format(query=query)
+    query += caller.single_call(query, False)
+
+    # 2.使用 hyde 检索得到 top-k 相似结果
+    retrieve_res = searcher.search_with_label(query, k)
+
+    return retrieve_res
+```
 
 ## 子模块
 
