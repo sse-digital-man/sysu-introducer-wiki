@@ -68,4 +68,56 @@
 
 #### (2) Vector Similarity
 
-> TODO: ...
+`Vector Similarity` 是稠密检索的主要思路。
+基于 `word embedding` 的技术，通过计算向量之间的相似度来实现检索。
+
+实现上，我们采用 `langchain_openai` 的 `OpenAIEmbeddings`，
+背后是一个训练用于完成 `word embedding` 的 `Transformer` 结构。
+同时，向量数据库我们采用 `langchain_community.vectorstores` 的 `Chroma`。
+
+整体的流程如下：
+
+1. 将数据库中的每一条数据，使用 `OpenAIEmbeddings` 嵌入到向量空间
+2. 将向量空间的数据组织存储到 `Chroma`
+3. `query` 到来之后，同样嵌入到向量空间
+4. 使用 `Chroma` 进行 `query` 和数据之间的相似度检索，选取 Top-K 的结果
+5. 使用阈值过滤相似度距离高于阈值的结果
+
+在其中，存在两个技术细节：
+
+**1 嵌入模板**
+
+嵌入模板对基于 `Transformer` 的嵌入模型的效果有着巨大的影响。
+这是由语言模型的特质所决定的，离散的词对嵌入的结果的影响是非常巨大的，在部分论文  [Making Pre-trained Language Models Better Few-shot Learners](https://arxiv.org/abs/2012.15723) 中也有提及。
+
+一个好的模板，应该能够显著提升 `Transformer` 模型在特定任务上的表现。
+由于我们是一个检索任务，且与中大校史相关，所以我设计了如下的模板，来连接数据。
+
+```python
+self.__prompt_template = """
+请回答用户关于中山大学信息的查询
+查询: {query}
+回答: {answer}
+"""
+data = self.__prompt_template.format(query=value['query'], answer=value['document'])
+```
+效果如下：
+
+```
+[query] 
+中山大学的饭堂什么水平
+
+[w/o templete]
+1. 中山大学的校名...
+2. 中山大学的办学层次...
+3. 中山大学的校训...
+
+[w/ templete]
+1. 广州东校区学四食堂饮食...
+2. 广州东校区行政楼餐厅饮食...
+3. 珠海校区榕园食堂饮食...
+```
+
+**2 阈值**
+
+收集了开发交流平台的广大开发者的阈值设置，针对 `text-embedding-ada-002` 的阈值设置一般在 `0.3~0.4` 之间。我们进行了少样本人工评估，最终选定阈值为 `0.35`。

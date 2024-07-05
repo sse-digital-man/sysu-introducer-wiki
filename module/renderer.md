@@ -84,8 +84,8 @@ high ponytail, black hair, open mouth, green skirt, slim,
 并且为了让生成的图像符合三视图的人设图要求，我们添加了使用三视图数据 Lora 微调权重，以及通过关键点控制图像生成的 Controlnet 模型，生成了初始的人设图。
 
 <p style="text-align:center">
-  <img src="./img/Controlnet.png" width="49%" />
-  <img src="./img/three-view.png" width="49%" /> 
+  <img src="./img/Controlnet.png" width="50%" />
+  <img src="./img/three-view.png" width="50%" /> 
   <br>Controlnet 骨架图 与 生成的三视图
 </p>
 
