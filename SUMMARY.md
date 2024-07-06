@@ -12,6 +12,7 @@
 -   [模块](module/README.md)
     -   [大语言模型](module/bot/README.md)
         -   [RAG](module/bot/RAG.md)
+        -   [searcher](module/bot/searcher.md)
     -   [直播爬虫](module/crawler.md)
     -   [视图层](module/renderer.md)
     -   [文本转语音](module/speaker.md)
