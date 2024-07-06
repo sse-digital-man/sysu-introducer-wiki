@@ -17,14 +17,13 @@
 # 抽象方法，不同类型的对象实现该方法以生成语音
 @abstractmethod
 def speak(self, text) -> str:
-    pass
+    ...
+
 # 根据类型名，生成格式化的音频文件名
 def _generate_filename(self, suffix: str = "wav") -> str:
-  ...
-# 文本转语音模块自检
-def check(self) -> Tuple[bool, Exception | None]:
-  ...
+    ...
 ```
+
 通过上述接口我们已经可以实现文本转语音的各种基本功能
 若希望额外实现功能，也可以通过在子类添加参数来实现重写，并在调用时加以区分。
 
