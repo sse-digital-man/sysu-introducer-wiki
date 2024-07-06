@@ -10,6 +10,7 @@
 
 我们来看 `GPT-3.5` 本身的回答能力：
 
+
 | Role      | Content                                            |
 | --------- | -------------------------------------------------- |
 | User      | 中山大学的校训是什么？                             |
@@ -43,8 +44,8 @@
 
 使用 openai sdk 进行调用 GPT3.5。
 
--   `apiKey`: 调用 API 所需要的秘钥
--   `url`: openai 代理的链接。具体使用说明可以参考 [GPT_API_free](http://github.com/chatanywhere/GPT_API_free)
+- `apiKey`: 调用 API 所需要的秘钥
+- `url`: openai 代理的链接。具体使用说明可以参考 [GPT_API_free](http://github.com/chatanywhere/GPT_API_free)
 
 > TODO: 描述 `prompt`
 
@@ -57,14 +58,27 @@
 该部分提供两种生成回答的策略。第一种随机策略，从随机回答库中选择一条文本进行输出。
 第二种是复读策略，会直接输出“我回答了 XXX”。
 
--   `delay`: 用于控制延迟
--   `isRandom`: 选择生成答案的策略
+- `delay`: 用于控制延迟
+- `isRandom`: 选择生成答案的策略
 
 ### 2. 检索器 Searcher
 
 #### (1) ElasticSearch
 
-> TODO: ...
+`Elasticsearch`是一个开源的实时分布式搜索和分析引擎，它建立在Apache Lucene库之上，被设计用于处理大规模数据集，具有高性能、可伸缩性和强大的全文搜索功能。
+
+工作原理：通过倒排索引`inverted index`机制，建立起文档中的每个词映射到包含该词的文档的索引，`Elasticsearch`能够快速定位包含特定词汇的文档，并根据相关性评分进行排序，从而实现高性能的全文搜索功能。
+
+我们使用ElasticSearch主要完成了下面的任务：
+
+* 索引创建：将中大语料库数据对象，存储在Elasticsearch中。在索引中，每个文档都是一个JSON格式的数据对象，包含了要检索的数据。可以根据数据模型设计文档的结构，将数据库中的字段映射到文档的字段。每个文档都会被分配一个唯一的ID，用于在搜索和检索时进行引用。
+* 关键词搜索：一旦数据被索引到Elasticsearch中，就可以通过发送搜索查询来执行基于关键词的检索。查询可以包含一个或多个关键词、条件和过滤器，以精确匹配所需的数据。Elasticsearch会根据查询条件在倒排索引中查找匹配的文档，并返回与查询相匹配的结果。
+
+与下面的词向量嵌入方法相比，ElasticSearch优势在于：
+
+1. **速度快**，Elasticsearch可以更快地定位和检索包含关键词的文档。这使得它能够在很短的时间内返回查询结果，平均查询时间可以达到0.2秒左右。
+2. **占用内存少**，ElasticSearch以较少的内存占用来支持快速的搜索和检索操作
+3. 基于大模型提取关键词的前置条件下，可以在得到不俗的检索结果的同时，检索用时大大减少。
 
 #### (2) Vector Similarity
 
@@ -101,6 +115,7 @@ self.__prompt_template = """
 """
 data = self.__prompt_template.format(query=value['query'], answer=value['document'])
 ```
+
 效果如下：
 
 ```
