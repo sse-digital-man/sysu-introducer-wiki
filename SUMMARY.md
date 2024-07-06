@@ -14,6 +14,7 @@
         -   [RAG](module/bot/RAG.md)
     -   [直播爬虫](module/crawler.md)
     -   [视图层](module/renderer.md)
+    -   [文本转语音](module/speaker.md)
 -   [控制器](controller/README.md)
     -   [Cli](controller/cli.md)
     -   [Webui](controller/webui.md)
