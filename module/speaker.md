@@ -36,26 +36,22 @@ def check(self) -> Tuple[bool, Exception | None]:
 
 我们制作了ssml 风格模版，并且可通过`_prepare_ssml(self, text: str) -> str`定制化输出语音
 ```xml
-<speak 
+<speak  
         xmlns="http://www.w3.org/2001/10/synthesis"
         xmlns:mstts="https://www.w3.org/2001/mstts"
-        version="1.0" xml:lang="zh-CN"
->
+        version="1.0" xml:lang="zh-CN">
         <voice name="zh-CN-XiaoyiNeural">
             <mstts:express-as style="hopeful" styledegree="2">
-            {text}
+                {text}
             </mstts:express-as>
         </voice>
 </speak>
 ```
 
-示例音频
-
 <audio controls>
     <source src="audios/Azure-TTS.wav" type="audio/wav">
-    Your browser does not support the audio element.
+    <p><a href="https://github.com/sse-digital-man/sysu-introducer-wiki/blob/main/module/audios">音频示例</a></p>
 </audio>
-
 
 ### Bert-VITS2
 [Bert-VITS2](https://github.com/fishaudio/Bert-VITS2) 结合了两种关键技术：[BERT](https://en.wikipedia.org/wiki/BERT_%28language_model%29)（基于Google提出的Transformer模型的预训练语言表示模型）和 VITS（基于变分推断的转换器结构）。它通过利用预训练的BERT 模型从文本中提取高质量的语言表示，并结合VITS模型将这些表示转换为自然流畅的语音输出。
@@ -64,7 +60,7 @@ def check(self) -> Tuple[bool, Exception | None]:
 
 <audio controls>
     <source src="audios/Bert-VITS2.wav" type="audio/wav">
-    Your browser does not support the audio element.
+    <p><a href="https://github.com/sse-digital-man/sysu-introducer-wiki/blob/main/module/audios">音频示例</a></p>
 </audio>
 
 同时为方便部署，提供WebAPI调用的Docker Image: [kingkia/bert-vits2-api - Docker Image | Docker Hub](https://hub.docker.com/r/kingkia/bert-vits2-api)
@@ -76,7 +72,8 @@ def check(self) -> Tuple[bool, Exception | None]:
 
 <audio controls>
     <source src="audios/GPT-SoVITS.wav" type="audio/wav">
-    Your browser does not support the audio element.
+    <p><a href="https://github.com/sse-digital-man/sysu-introducer-wiki/blob/main/module/audios">音频示例</a></p>
 </audio>
+
 
 为方便部署，提供WebAPI调用的Docker Image: [kingkia/gpt-sovits-api - Docker Image | Docker Hub](https://hub.docker.com/r/kingkia/gpt-sovits-api)
