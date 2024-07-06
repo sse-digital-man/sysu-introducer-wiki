@@ -1,36 +1,72 @@
 # RAG
 
-本实现类型采用 `RAG(Retrieval Augmented Generation)` 检索增强生成技术，构建了相关的知识数据库，再与**检索器**，**提示工程**等技术结合，来提升大模型的知识能力。
+本实现类型采用 `RAG` (Retrieval Augmented Generation) 检索增强生成技术，构建了相关的知识数据库，再与**检索器**，**提示工程**等技术结合，来提升大模型的知识能力。
+
+此外，根据检索方式，我们又将其派生出 Sparse（稀疏）和 Dense（稠密）两种具体的实现类型，这两种实现会在**检索效率**和**检索质量**进行平衡。
 
 ## 处理逻辑
 
-### 1. 检索增强生成 Rag
-
-检索增强生成的流程可以直观地分为：1)检索，2)增强，3)生成。代码框架如下：
+检索增强生成的流程可以直观地分为检索 -> 增强 -> 生成。此外，由于本项目仅搜集了中大相关的知识数据，因此检索时可能会出现无效检索的情况（也就是无法检索到与问题相关的文本），因此我们额外引入了兜底策略的逻辑。
 
 ```python
-class RagBot(BasicBot):
-    demonstrate_prompt = ...
-    data_prompt = ...
-    def load_config(self):
-        ...
-    def retrieve_sim_k(self, query: str, k: int) -> Dict[str, str]:
-        ...
-    @BasicModule._handle_log
-    def talk(self, query: str) -> str:
-        ...
+def talk(self, query: str) -> str:
+    if self._searcher is None:
+        return self._caller.single_call(query)
+
+    # 1. 使用 searcher 进行向量检索
+    data = self._searcher.search_with_label(query, 3)
+
+    # 2. 当检索效果不好时执行兜底策略
+    if len(data) == 0:
+        return self._last_strategy(query)
+
+    # 3. Prompt 生成
+    final_prompt = self._generate_prompt(query, data)
+
+    # 4. 生成最终回答
+    return self._caller.single_call(final_prompt)
 ```
 
-#### 检索
+### 1. 检索
 
-想要完成检索任务，首先我们需要有相对应的数据。
+检索部分主要分为**数据集制作**和**检索方式**两个部分。
 
-> TODO: 添加数据库收集的总结
+#### (1) 数据库制作
 
-有了数据，便可以开始检索工作。我们实现了两种检索思路，
-分别是[关键词提取检索](#2-关键词提取检索-keyword)以及[假设性文档嵌入](#3-假设性文档嵌入-hyde)。
+想要完成检索任务，首先我们需要有相对应的数据。下面简单介绍一下如何收集校庆数据，以及数据的格式：
 
-#### 增强
+1. 确定数据结构：首先，我们需要确定数据库的数据结构。为了便于后续的 ElasticSearch 索引构建，我们选择使用 JSON 格式来构建数据库，以使用键值对的方式组织数据，非常适合表示结构化的数据。
+2. 设计数据字段：我们可以将每个数据项视为一个对象，其中包含三个字段：query、document 和 metadata。
+
+   - query 字段表示查询的关键词或问题
+   - document 字段表示查询结果的文本或内容
+   - metadata 字段表示与查询结果相关的元数据/关键词信息。
+
+3. 收集数据：我们在[中山大学官网](https://www.sysu.edu.cn/)、[中大百年校庆官网](https://sysu100.sysu.edu.cn/)、[中山大学百度百科](https://baike.baidu.com/item/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/5672)、校园公众号、视频号等平台，收集有关校园生活、人文历史、招生政策、院系分布等数据，并将数据拆分为 300+个 JSON 对象。
+   下面是一个示例：
+
+   ```json
+   "1":{
+       "query":"中山大学成立的校史",
+       "document":"1924年,孙中山亲手将广州地区多所高校整合创立国立广东大学。1926年定名为国立中山大学。如今该校由1952年院系调整后分设的中山大学和中山医科大学于2001年10月合并而成。",
+       "metadata":"校名,校史,简介,发展史,改称"
+   },
+   ```
+
+#### (2) 检索方式
+
+<!-- 关键词提取逻辑放到稀疏检索部分 -->
+
+检索方式主要分为 Dense 和 Sparse 两种，两种比较如下。具体技术细节请查看 [检索器 Searcher](module/bot/README.md)。
+
+|          | Dense            | Sparse        |
+| -------- | ---------------- | ------------- |
+| 检索对象 | 文本向量         | 文本          |
+| 检索速度 | 较慢             | 较快          |
+| 检索效果 | 较好             | 较差          |
+| 实现     | FastText, Vector | ElasticSearch |
+
+### 2. 增强
 
 为了将检索的相关信息用于增强大模型能力，我们利用大模型强大的 `上下文学习(In-context Learning)` 能力，通过**提示词工程**来实现。
 因此，我们定义了如下的 `prompt` 模板：
@@ -89,21 +125,21 @@ data_prompt = \
 **示范(demonstration)：** 通过 `Few-shot Learning`，增强大模型的指令遵循能力。
 我们提供了三个范例，分别对应三种情况：
 
--   问题与检索内容相关，可以根据问题与检索内容回答。
--   问题相关，检索得到的内容不相关，只根据用户问题。
--   用户问题与中大无关，不应该回答。
+- 问题与检索内容相关，可以根据问题与检索内容回答。
+- 问题相关，检索得到的内容不相关，只根据用户问题。
+- 用户问题与中大无关，不应该回答。
 
 **检索增强内容：** 以 `[参考资料]` 的形式给到模型。
 
-#### 生成
+### 3. 生成
 
 将最终融合的 `prompt` 给到[调用器 Caller](#调用器-caller) 生成答案。
 
-### 2. 关键词提取检索 Keyword
+### 4. 兜底策略
 
-> TODO: 如何使用两个子模块生成消息的回答...
+兜底策略并不会是任何 RAG 对象都是生效的，此处在实现时需要进行区分。例如以下 `HyDE` 兜底策略通常效果会在 Dense 中更好。
 
-### 3. 假设性文档嵌入 HyDE
+#### Hyde 兜底
 
 `Hyde`(Hypothetical Document Embeddings，假设性文档嵌入)通过使用一个大语言模型，在响应查询的时候建立一个假设的文档。
 通过计算假设文档的向量而在[向量数据库](#2-vector-similarity)中搜索。
@@ -114,15 +150,14 @@ data_prompt = \
 代码实现上也非常简单：
 
 ```python
-def retrieve_sim_k(self, query: str, k: int) -> Dict[str, str]:
-    # 基本的检查...
+# 基本的检查...
 
-    # 1. 生成 hyde 假设性回答
-    query = searcher.prompt_template.format(query=query)
-    query += caller.single_call(query, False)
+# 1. 生成 hyde 假设性回答
+query = searcher.prompt_template.format(query=query)
+query += caller.single_call(query, False)
 
-    # 2.使用 hyde 检索得到 top-k 相似结果
-    retrieve_res = searcher.search_with_label(query, k)
+# 2.使用 hyde 检索得到 top-k 相似结果
+retrieve_res = searcher.search_with_label(query, k)
 
-    return retrieve_res
+return retrieve_res
 ```
