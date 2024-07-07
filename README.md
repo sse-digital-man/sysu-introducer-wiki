@@ -33,3 +33,10 @@
 - 专业知识：人工搜集和整理中大相关的知识数据，并自建数据库，再结合 RAG 等方法思想，尽可能提高数字人回答问题的准确性。
 - 弹幕筛选：动态消息队能够排序和筛选大量同时涌入的弹幕信息，获得当前时间内最具有回答价值的问题，从而减少了回答无用问题的可能，高效利用数字人回答问题的机会。
 - 回答响应：通过引入**异步处理**的方式，数字人在说话时也可以思考下一个问题的答案，提高回答的响应速度。
+
+## 相关链接
+
+* 主代码仓库：[sysu-introducer-plus](https://github.com/sse-digital-man/sysu-introducer-plus)
+* 控制器代码仓库：[sysu-introducer-controller](https://github.com/sse-digital-man/sysu-introducer-controller)
+* 项目文档仓库：[sysu-introducer-wiki](https://github.com/sse-digital-man/sysu-introducer-wiki)
+* 项目文档链接：[fucloud.gitbook.io](https://fucloud.gitbook.io/sysu-introducer)
