@@ -11,7 +11,7 @@
 
 本系统的总体架构如下所示。
 
-![总体架构图](./img/structure.png)
+![总体架构图](./img/structure.svg)
 
 ## 项目亮点
 
