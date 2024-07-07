@@ -114,4 +114,12 @@ high ponytail, black hair, open mouth, green skirt, slim,
 
 ## 直播间
 
-> TODO: 直播间场景布置...
+虚拟主播直播布局基本为：
+
+- 左边弹幕列表
+- 中间虚拟形象
+- 右边贵宾、舰长等
+
+结合 bilibili 直播姬提供的 h5 素材，很容易就可以实现弹幕列表。
+
+[设计图暂无]

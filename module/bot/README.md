@@ -43,8 +43,8 @@
 
 使用 openai sdk 进行调用 GPT3.5。
 
--   `apiKey`: 调用 API 所需要的秘钥
--   `url`: openai 代理的链接。具体使用说明可以参考 [GPT_API_free](http://github.com/chatanywhere/GPT_API_free)
+- `apiKey`: 调用 API 所需要的秘钥
+- `url`: openai 代理的链接。具体使用说明可以参考 [GPT_API_free](http://github.com/chatanywhere/GPT_API_free)
 
 > TODO: 描述 `prompt`
 
@@ -57,8 +57,8 @@
 该部分提供两种生成回答的策略。第一种随机策略，从随机回答库中选择一条文本进行输出。
 第二种是复读策略，会直接输出“我回答了 XXX”。
 
--   `delay`: 用于控制延迟
--   `isRandom`: 选择生成答案的策略
+- `delay`: 用于控制延迟
+- `isRandom`: 选择生成答案的策略
 
 ### 2. 检索器 Searcher
 
